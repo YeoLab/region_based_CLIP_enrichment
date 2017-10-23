@@ -1,0 +1,12 @@
+#!/usr/bin/env count_reads_broadfeatures_frombamfi_PEmap.cwl
+
+clipBamFile:
+  class: File
+  path: /home/bay001/projects/codebase/region_based_CLIP_enrichment/data/reference_data/input.bam
+gencodeGTFFile:
+  class: File
+  path: /home/bay001/projects/codebase/region_based_CLIP_enrichment/data/reference_data/gencode.v19.chr_patch_hapl_scaff.annotation.gtf
+gencodeTableBrowserFile:
+  class: File
+  path: /home/bay001/projects/codebase/region_based_CLIP_enrichment/data/reference_data/gencode.v19.chr_patch_hapl_scaff.annotation.gtf.parsed_ucsc_tableformat
+output: readcounts.txt
