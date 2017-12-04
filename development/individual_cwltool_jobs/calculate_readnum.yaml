@@ -1,8 +1,0 @@
-#!/usr/bin/env calculate_readnum.cwl
-
-bamFile:
-  class: File
-  path: /home/bay001/projects/codebase/region_based_CLIP_enrichment/data/reference_data/APO_A_IN_S34_L003_R1_001.unassigned.adapterTrim.round2.rmRep.rmDup.sorted.r2.bam
-printMatchingReadCount: true
-excludeFlags: 4
-output: input.bam.mapped_read_num

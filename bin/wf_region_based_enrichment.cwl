@@ -1,1 +1,0 @@
-../development/wf_region_based_enrichment.cwl
