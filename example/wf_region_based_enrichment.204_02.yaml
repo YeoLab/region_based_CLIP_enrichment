@@ -1,0 +1,28 @@
+#!/usr/bin/env wf_region_based_enrichment.cwl
+
+## Essential Input Files
+clipBamFile:
+  class: File
+  path: inputs/204_02_RBFOX2.merged.r2.bam
+inputBamFile:
+  class: File
+  path: inputs/RBFOX2-204-INPUT_S2_R1.unassigned.adapterTrim.round2.rmRep.rmDup.sorted.r2.bam
+
+## Default Parameters - shouldn't change except between species
+gencodeGTFFile:
+  class: File
+  path: inputs/gencode.v19.chr_patch_hapl_scaff.annotation.gtf
+gencodeTableBrowserFile:
+  class: File
+  path: inputs/gencode.v19.chr_patch_hapl_scaff.annotation.gtf.parsed_ucsc_tableformat
+
+## Output files
+clipBroadFeatures: 204_02_RBFOX2.clip.broadfeaturecounts.txt
+inputBroadFeatures: 204_02_RBFOX2.input.broadfeaturecounts.txt
+combinedOutput: 204_02_RBFOX2.combined.ReadsByLoc
+l2fcWithPvalEnr: 204_02_RBFOX2.l2fc_significant_regioncalls.txt
+l2fc: 204_02_RBFOX2.l2fc.txt
+
+## Misc output files (may be useful as inputs to another workflow in the future)
+clipMappedReadNum: 204_02_RBFOX2.clip.mapped_read_num
+inputMappedReadNum: 204_02_RBFOX2.input.mapped_read_num
