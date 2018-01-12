@@ -1,4 +1,4 @@
-#!/usr/bin/env wf_region_based_enrichment.cwl
+#!/usr/bin/env wf_regionbasedenrichment.cwl
 
 ## Essential Input Files
 clipBamFile:
