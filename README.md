@@ -5,11 +5,14 @@ CWL v1.0 spec.
 ### Prerequisites:
 - For Yeolab: module already installed
 - For everyone else:
+    - samtools 1.3+
     - perl 5.22+
         - Statistics::Basic
         - Statistics::Distributions
         - Statistics::R
     - CWL 1.0
+    - R (any version that works with Statistics::R)
+
 - You can try running:
     - ```source create_environment``` (installs Perl 5.22)
     - ```source run_perlbrew_perl5.10.1.sh``` (attempts to use perlbrew to install Perl 5.10)
