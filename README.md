@@ -10,17 +10,28 @@ CWL v1.0 spec.
         - Statistics::Distributions
         - Statistics::R
     - CWL 1.0
+- You can try running:
+    - ```source create_environment``` (installs Perl 5.22)
+    - ```source run_perlbrew_perl5.10.1.sh``` (attempts to use perlbrew to install Perl 5.10)
 
 ### How to install:
 - For Yeolab: module already installed
-    - (On TSCC) ```module load eclipregionnormalize```
+    - (On TSCC) ```module load eclipregionnormalize``` (doesn't work as of 1/12, C library issues)
+    - Please use the 'create environment strategy above, this should still work'
 - For everyone else:
-    - Please ensure that the following are in your $PATH:
+    - Please ensure that the following are in your $PATH
+    (or ```source add_paths.sh``` in the top directory.
+    ```create_environments.sh``` should already do this for you):
+        - bin/
         - bin/perl/
         - cwl/
 
 ### How to run:
 - Fill out the requisite fields in the yaml file (please see: example/wf_region_based_enrichment.204_01.yaml as an example).
+
+### Notes:
+- Make sure Perl and its modules are properly installed! You may run into C problems, resulting in negative p-values!
+- I suggest running the workflow in its entirety for one sample (if batch processing) to ensure no silent error messages are thrown
 
 #### Description of requisite fields:
 

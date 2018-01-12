@@ -1,0 +1,13 @@
+#!/usr/bin/env convert_ReadsByLoc_combined_significancecalls.cwl
+
+combinedReadsByLocFile:
+  class: File
+  path: intermediates/APO_01.combined.ReadsByLoc
+clipMappedReadNumFile:
+  class: File
+  path: intermediates/APO_IP_01_APOBEC4.merged.r2.mapped_read_num
+inputMappedReadNumFile:
+  class: File
+  path: intermediates/APO_A_IN_S34_L003_R1_001.unassigned.adapterTrim.round2.rmRep.rmDup.sorted.r2.bam.mapped_read_num
+l2fcWithPvalEnr: APO_01.l2fc_significant_regioncalls.txt
+l2fc: APO_01.l2fc.txt
