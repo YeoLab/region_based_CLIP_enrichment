@@ -87,11 +87,8 @@ clipBroadFeatures: 204_01_RBFOX2.clip.broadfeaturecounts.txt
 inputBroadFeatures: 204_01_RBFOX2.input.broadfeaturecounts.txt
 combinedOutput: 204_01_RBFOX2.combined.ReadsByLoc
 ```
-This file contains the log2 fold changes for each region of each gene. NaNs that are
-present in these files indicate ALL of the following:
-- that less than 10 reads were present in either the CLIP or INPUT sample.
-- that less than 10 reads were present in either the CLIP or the EXPECTED INPUT
-- that less than 10 reads were present in either the INPUT or the EXPECTED CLIP
+This file contains the log2 fold changes for each region of each gene. Fold changes are only reported IF:
+
 
 where:
 - EXPECTED INPUT = clip reads * (input mapped read number / clip mapped read number),
