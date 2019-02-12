@@ -19,8 +19,7 @@ CWL v1.0 spec.
 
 # How to install:
 - For Yeolab: module already installed
-    - (On TSCC) ```module load eclipregionnormalize``` (doesn't work as of 1/12, C library issues)
-    - Please use the 'create environment strategy above, this should still work'
+    - (On TSCC) ```module load eclipregionnormalize``` 
 - For everyone else:
     - Please ensure that the following are in your $PATH
     (or ```source add_paths.sh``` in the top directory.

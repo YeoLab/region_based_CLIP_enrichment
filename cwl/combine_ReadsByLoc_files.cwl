@@ -4,6 +4,9 @@ cwlVersion: v1.0
 
 class: CommandLineTool
 
+requirements:
+  - class: InlineJavascriptRequirement
+
 baseCommand: [combine_ReadsByLoc_files.pl]
 
 inputs:
@@ -15,15 +18,16 @@ inputs:
     label: "tabbed files containing number of reads per gene by location"
     doc: "tabbed files containing number of reads per gene by location"
 
-  output:
-    type: string
-    label: "output file"
-    doc: "output file"
-
 outputs:
   outputFile:
     type: File
     outputBinding:
-      glob: $(inputs.output)
+      glob: |
+        ${
+          return inputs.readsByLocFiles[0].nameroot + "_combined.tsv";
+        }
 
-stdout: $(inputs.output)
+stdout: |
+    ${
+      return inputs.readsByLocFiles[0].nameroot + "_combined.tsv";
+    }
