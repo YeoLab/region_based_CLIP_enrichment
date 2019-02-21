@@ -13,7 +13,6 @@ my $readcount_fi = $ARGV[0];
 
 my %mapped_read_count;
 my $clip_read_num_fi = $ARGV[1];
-
 open(RN,$clip_read_num_fi) || die "no $clip_read_num_fi\n";
 for my $line (<RN>) {
     chomp($line);
@@ -39,6 +38,10 @@ close(RN);
 
 # my $pval_fi = $readcount_fi.".l2fcwithpval_enr.csv";
 my $pval_fi = $ARGV[3];
+my $fisher_tmp_fi = $pval_fi.".tmp_fisher";
+my $fisher_tmp_fi_out = $pval_fi.".tmp_fisher.out";
+my $fisher_tmp_fi_s = $fisher_tmp_fi.".s";
+
 my $l2fc_fi = $ARGV[4];
 
 open(RF,$readcount_fi) || die "no $readcount_fi\n";
@@ -47,39 +50,33 @@ chomp($labelline);
 my @labels = split(/\t/,$labelline);
 my $del = shift(@labels);
 
-my $number_of_categories = 16;
-
-unless (scalar(@labels) % $number_of_categories == 0) {
-    print STDERR "WARNING WARNING\nWARNING WARNING\n$readcount_fi doesn't have mod $number_of_categories length????\n";
+unless (scalar(@labels) % 8 == 0) {
+    print STDERR "WARNING WARNING\nWARNING WARNING\n$readcount_fi doesn't have mod 8 length????\n";
     exit;
 }
-my $num_replicates = (scalar(@labels) / $number_of_categories);
-print("NUM REPLICATES".$num_replicates);
+my $num_replicates = (scalar(@labels) / 8);
+
 my @file_split = split(/\//,$readcount_fi);
 my @file_split2 = split(/\_/,$file_split[$#file_split]);
-my $UID = $file_split2[0]."_".$file_split2[1];
+# my $UID = $file_split2[0]."_".$file_split2[1];
 
 my %CLIP;
 my $type_flag;
 my @rep_listing;
-my @input_rep_listing;
-my $label1;
-my $label2;
-my %rep_ip2input;
 
 if ($num_replicates == 2) {
-    ($CLIP{"clip"}{fi},$label1) = split(/\|/,$labels[0]);
-    ($CLIP{"input"}{fi},$del) = split(/\|/,$labels[$number_of_categories]);
-    $labels[0] = $label1;
-    $labels[$number_of_categories] = $label1;
-    for(my $i=0;$i<$number_of_categories;$i++) {
-	$labels[$i] = $UID."clip|".$labels[$i];
+    ($CLIP{"clip"}{fi},$del) = split(/\|/,$labels[0]);
+    ($CLIP{"input"}{fi},$del) = split(/\|/,$labels[8]);
+    $labels[0] = "CDS";
+    $labels[8] = "CDS";
+    for(my $i=0;$i<8;$i++) {
+	# $labels[$i] = $UID."_01|".$labels[$i];
+	$labels[$i] = "rep_01|".$labels[$i];
     }
     $type_flag = "one_replicate";
     @rep_listing = ("clip");
-    @input_rep_listing = ("input");
-    $rep_ip2input{"clip"} = "input";
-    print("TWO INPUTS");
+    print("cliphash:".$CLIP{"clip"}{fi}."\n");
+    print("inputhash:".$CLIP{"input"}{fi}."\n");
 }
 
 for my $rep (@rep_listing,"input") {
@@ -109,40 +106,38 @@ for my $line (<RF>) {
     my $ensg = shift(@tmp);
 
     for my $rep (@rep_listing) {
-	@{$CLIP{$rep}{data}} = splice @tmp,0,$number_of_categories;
+	@{$CLIP{$rep}{data}} = splice @tmp,0,8;
     }
-    for my $rep (@input_rep_listing) {
-	@{$CLIP{$rep}{data}} = splice @tmp,0,$number_of_categories;
-    }
+    @{$CLIP{"input"}{data}} = splice @tmp,0,8;
     print STDERR "WARNING WARNING tmp array is too long?? $line\n" if ($tmp[0]);
 
     for my $rep (@rep_listing) {
-	for (my $i=0;$i<=($number_of_categories-1);$i++) {
+	for (my $i=0;$i<=7;$i++) {
 	    $CLIP{$rep}{data}[$i] = 1 unless ($CLIP{$rep}{data}[$i] > 0);
-	    $CLIP{$rep_ip2input{$rep}}{data}[$i] = 1 unless ($CLIP{$rep_ip2input{$rep}}{data}[$i] > 0);
+	    $CLIP{"input"}{data}[$i] = 1 unless ($CLIP{"input"}{data}[$i] > 0);
 	    
-	    my $sum = $CLIP{$rep}{data}[$i] + $CLIP{$rep_ip2input{$rep}}{data}[$i];
+	    my $sum = $CLIP{$rep}{data}[$i] + $CLIP{"input"}{data}[$i];
 	    
 	    my $expected_input = $CLIP{$rep}{data}[$i] * $CLIP{$rep}{inpexpratio};
-	    my $expected_expt  = $CLIP{$rep_ip2input{$rep}}{data}[$i] * $CLIP{$rep}{ratio};
+	    my $expected_expt  = $CLIP{"input"}{data}[$i] * $CLIP{$rep}{ratio};
 
 	    
 	    my $chisq_11 = $CLIP{$rep}{data}[$i];
 	    my $chisq_10 = $CLIP{$rep}{mappednum} - $CLIP{$rep}{data}[$i];
-	    my $chisq_01 = $CLIP{$rep_ip2input{$rep}}{data}[$i];
-	    my $chisq_00 = $CLIP{$rep_ip2input{$rep}}{mappednum} - $CLIP{$rep_ip2input{$rep}}{data}[$i];
+	    my $chisq_01 = $CLIP{"input"}{data}[$i];
+	    my $chisq_00 = $CLIP{"input"}{mappednum} - $CLIP{"input"}{data}[$i];
 	    my ($chipval,$chival,$chitype,$chienrdepl) = &fisher_or_chisq($chisq_11,$chisq_10,$chisq_01,$chisq_00);
 	    my $log10pval = $chipval > 0 ? -1 * log($chipval)/log(10) : 400 ;
-	
+	    if ($log10pval < 0) {
+	        print STDERR "$log10pval\t$ensg\n";
+	    }
+
 	    $alldata_l10pvals{$ensg}{$rep}[$i] = sprintf("%.5f",$log10pval);
 	    
 ## fixed this 2016/01/27 - wasn't actuall counting if both were >= 10, just if expected was >= 10 
 #	    if (($CLIP{$rep}{data}[$i] >= 10 && $expected_input >= 10) || ($CLIP{"input"}{data}[$i] >= 10 && $expected_expt >= 10)) {
-	    my $min_ip_cutoff = 10;
-	    my $min_input_cutoff = 10;
-#	    if (($CLIP{$rep}{data}[$i] >= 10 && $CLIP{$rep_ip2input{$rep}}{data}[$i] >= 10) || ($CLIP{$rep}{data}[$i] >= 10 && $expected_input >= 10) || ($CLIP{$rep_ip2input{$rep}}{data}[$i] >= 10 && $expected_expt >= 10)) {
-	    if (($CLIP{$rep}{data}[$i] >= $min_ip_cutoff && $CLIP{$rep_ip2input{$rep}}{data}[$i] >= $min_input_cutoff) || ($CLIP{$rep}{data}[$i] >= $min_ip_cutoff && $expected_input >= $min_input_cutoff) || ($CLIP{$rep_ip2input{$rep}}{data}[$i] >= $min_input_cutoff && $expected_expt >= $min_ip_cutoff)) {
-		my $l2input_norm = sprintf("%.4f",log(($CLIP{$rep}{data}[$i] / $CLIP{$rep_ip2input{$rep}}{data}[$i]) / ($CLIP{$rep}{ratio}))/log(2));
+	    if (($CLIP{$rep}{data}[$i] >= 10 && $CLIP{"input"}{data}[$i] >= 10) || ($CLIP{$rep}{data}[$i] >= 10 && $expected_input >= 10) || ($CLIP{"input"}{data}[$i] >= 10 && $expected_expt >= 10)) {
+		my $l2input_norm = sprintf("%.4f",log(($CLIP{$rep}{data}[$i] / $CLIP{"input"}{data}[$i]) / ($CLIP{$rep}{ratio}))/log(2));
 		push @{$l2input_norms{$rep}{$labels[$i]}},$l2input_norm;
 		$alldata{$ensg}{$rep}[$i] = $l2input_norm;
 		
@@ -169,11 +164,11 @@ open(POUT,">$pval_fi");
 open(LOUT,">$l2fc_fi");
 
 if ($type_flag eq "one_replicate") {
-    print POUT "ENSG\t".join("\t",@labels[0..($number_of_categories-1)])."\n";
-    print LOUT "ENSG\t".join("\t",@labels[0..($number_of_categories-1)])."\n";
-} elsif ($type_flag eq "two_replicate_ENCODEstyle" || $type_flag eq "two_replicate_two_input") {
-    print POUT "ENSG\t".join("\t",@labels[0..($number_of_categories * 2 - 1)])."\n";
-    print LOUT "ENSG\t".join("\t",@labels[0..($number_of_categories * 2 - 1)])."\n";
+    print POUT "ENSG\t".join("\t",@labels[0..7])."\n";
+    print LOUT "ENSG\t".join("\t",@labels[0..7])."\n";
+} elsif ($type_flag eq "two_replicate_ENCODEstyle") {
+    print POUT "ENSG\t".join("\t",@labels[0..15])."\n";
+    print LOUT "ENSG\t".join("\t",@labels[0..15])."\n";
 } else {
     print STDERR "type flag error $type_flag\n";
 }
@@ -183,7 +178,7 @@ for my $ensg (keys %alldata) {
     my %l10pvals;
     my %l2fcs;
     for my $rep (@rep_listing) {
-	for my $i (0..($number_of_categories-1)) {
+	for my $i (0..7) {
 	    $l10pvals{$rep}[$i] = "NaN|".$alldata_l10pvals{$ensg}{$rep}[$i];
 	    $l2fcs{$rep}[$i] = "NaN";
 	    if ($alldata{$ensg}{$rep}[$i] eq "NA") {
@@ -207,6 +202,10 @@ for my $ensg (keys %alldata) {
 close(POUT);
 close(LOUT);
 	
+system("rm $fisher_tmp_fi_out");
+system("rm $fisher_tmp_fi");
+system("rm $fisher_tmp_fi_s");
+
 #my $pval_fi = $readcount_fi.".l2fcwithpval_enr.csv";
 #system("perl /home/elvannostrand/data/clip/CLIPseq_analysis/scripts/regionlevelanalysis_GOanalysisonl2fc.pl $pval_fi");
 

@@ -1,0 +1,30 @@
+#!/usr/bin/env wf_region_based_enrichment_SE.cwl
+
+clipBamFile:
+  class: File
+  path: inputs/FUS.LL_ARhi0_FUS_IP_1.umi.r1TrTr.sorted.STARUnmapped.out.sorted.STARAligned.outSo.rmDupSo.bam
+
+inputBamFile:
+  class: File
+  path: inputs/FUS.LL_ARhi0_FUS_INPUT_1.umi.r1TrTr.sorted.STARUnmapped.out.sorted.STARAligned.outSo.rmDupSo.bam
+
+gencodeGTFFile:
+  class: File
+  path: inputs/gencode.v19.chr_patch_hapl_scaff.annotation.gtf
+  
+gencodeTableBrowserFile:
+  class: File
+  path: inputs/gencode.v19.chr_patch_hapl_scaff.annotation.gtf.parsed_ucsc_tableformat
+  
+trna_bed_file:
+  class: File
+  path: inputs/hg19-tRNAs.bed
+  
+lncrna_table_file:
+  class: File
+  path: inputs/lncipedia_5_0_hg19.bed.parsed_ucsc_tableformat
+  
+lncrna_full_file:
+  class: File
+  path: inputs/lncipedia_5_0_hg19.gff.parsed
+

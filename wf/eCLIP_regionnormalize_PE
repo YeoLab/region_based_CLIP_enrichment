@@ -18,7 +18,7 @@ set -o pipefail
 
 
 CWLRUNNER=cwltoil # either: cwltool cwltoil or cwltorq
-WORKFLOW=wf_region_based_enrichment_SE # the prefix of the workflow cwl (without .cwl extension)
+WORKFLOW=wf_region_based_enrichment_PE # the prefix of the workflow cwl (without .cwl extension)
 
 PIPELINE=REGIONLEVEL_NORMALIZATION  # workflow prefix
 PIPELINEVERSION=0.0.3  # workflow version

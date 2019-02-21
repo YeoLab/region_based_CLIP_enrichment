@@ -16,10 +16,8 @@ my %ensg2name;
 my %ensg2type;
 
 my $clip_fi1 = $ARGV[0];
-
 my $gencode_gtf_file = $ARGV[1];
 my $gencode_tablebrowser_file = $ARGV[2];
-
 my $output_fi = $ARGV[3];
 
 open(OUT,">$output_fi");

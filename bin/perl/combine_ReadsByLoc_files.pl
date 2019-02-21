@@ -3,7 +3,7 @@
 use warnings;
 use strict;
 
-my $line_size = 8;
+my $line_size = 14;
 my @files = @ARGV;
 
 my %hash;

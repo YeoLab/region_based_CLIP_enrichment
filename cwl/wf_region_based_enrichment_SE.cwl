@@ -18,6 +18,13 @@ inputs:
   gencodeTableBrowserFile:
     type: File
 
+  trna_bed_file:
+    type: File
+  lncrna_table_file:
+    type: File
+  lncrna_full_file:
+    type: File
+
 outputs:
   clipBroadFeatureCountsFile:
     type: File
@@ -66,20 +73,26 @@ steps:
       - output
 
   clipCountReadsBroadFeatures:
-    run: count_reads_broadfeatures_frombamfi_map.cwl
+    run: count_reads_broadfeatures_frombamfi_SEmap_lncRNA.cwl
     in:
       clipBamFile: clipBamFile
       gencodeGTFFile: gencodeGTFFile
       gencodeTableBrowserFile: gencodeTableBrowserFile
+      trna_bed_file: trna_bed_file
+      lncrna_table_file: lncrna_table_file
+      lncrna_full_file: lncrna_full_file
     out:
       - outputFile
 
   inputCountReadsBroadFeatures:
-    run: count_reads_broadfeatures_frombamfi_map.cwl
+    run: count_reads_broadfeatures_frombamfi_SEmap_lncRNA.cwl
     in:
       clipBamFile: inputBamFile
       gencodeGTFFile: gencodeGTFFile
       gencodeTableBrowserFile: gencodeTableBrowserFile
+      trna_bed_file: trna_bed_file
+      lncrna_table_file: lncrna_table_file
+      lncrna_full_file: lncrna_full_file
     out:
       - outputFile
 
